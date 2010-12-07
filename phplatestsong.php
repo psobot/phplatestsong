@@ -12,7 +12,7 @@
 
 	ini_set("allow_url_fopen", "On");
 	define("LASTFMUSERNAME", "killercanuck");					//Set your username here.
-	define("LASTFMAPIKEY", "YOURAPIKEYGOESHERE");	//Set your API key here.
+	define("LASTFMAPIKEY", "your_key_goes_here");	//Set your API key here.
 
 	class Date_Difference {
 		/**
@@ -65,7 +65,7 @@
 	 *				<div id="lastfmtime">time ago</div>
 	 */
 	function latestSong($username = LASTFMUSERNAME, $api_key = LASTFMAPIKEY){
-		$data = simplexml_load_file("http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=".$username."&api_key=".$api_key."&limit=1");
+		$data = simplexml_load_file("http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=".$username."&api_key=".$api_key); // add ."&limit=1" for... different? behaviour
 		if($data === false)	die("Something went wrong, last.fm's not responding... so insert a song here.");
 		foreach($data->getNamespaces(true) as $prefix => $namespace)	$data->registerXPathNamespace($prefix, $namespace);
 

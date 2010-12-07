@@ -12,7 +12,7 @@
 
 	ini_set("allow_url_fopen", "On");
 	define("LASTFMUSERNAME", "killercanuck");					//Set your username here.
-	define("LASTFMAPIKEY", "b25b959554ed76058ac220b7b2e0a026");	//Set your API key here.
+	define("LASTFMAPIKEY", "YOURAPIKEYGOESHERE");	//Set your API key here.
 
 	class Date_Difference {
 		/**

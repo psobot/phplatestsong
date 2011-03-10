@@ -30,7 +30,8 @@
 			$diff = $compareTo->format('U') - $date; 
 			$dayDiff = floor($diff / 86400); 
 	
-			if(is_nan($dayDiff) || $dayDiff < 0) return ''; 
+			if(is_nan($dayDiff)) return '';
+			if($dayDiff < 0) return "listening now";
 					 
 			if($dayDiff == 0) { 
 				if($diff < 60) return 'listening now'; 
@@ -65,19 +66,19 @@
 	 *				<div id="lastfmtime">time ago</div>
 	 */
 	function latestSong($username = LASTFMUSERNAME, $api_key = LASTFMAPIKEY){
-		$data = simplexml_load_file("http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=".$username."&api_key=".$api_key); // add ."&limit=1" for... different? behaviour
-		if($data === false)	die("Something went wrong, last.fm's not responding... so insert a song here.");
-		foreach($data->getNamespaces(true) as $prefix => $namespace)	$data->registerXPathNamespace($prefix, $namespace);
+		$data = @json_decode(file_get_contents("http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=".$username."&api_key=".$api_key."&limit=2&format=json"));
+		if($data === false)	die("Something went wrong...<br />It looks like last.fm's not responding.<br />Just assume I'm probably listening to some good music right now.");
+		$song = $data->recenttracks->track[0];
 
-		$song = firstOf($data->recenttracks->track);
-		$date = Date_Difference::getString($song->date->attributes()->uts);
-		$pic = firstOf($song->xpath('image[@size="medium"]'));
+		$date = "listening now";
+		if(!is_null($song->date)) $date = Date_Difference::getString($song->date->uts);
+
+		$pic = $song->image[1]->{'#text'};
 
 		$r = "";
-
 		if($pic != "") $r .= "<style type=\"text/css\">#lastfm{background: url(".$pic.")}</style>";
 		else $r .= "<style type=\"text/css\">#lastfm{background: url(http://www.petersobot.com/img/music.jpg)}</style>";
-		$r .= "<a href=\"" . $song->url . "\">" . $song->name . "</a><br />by " . $song->artist . "<div id=\"lastfmtime\">".$date."</div>";
+		$r .= "<a href=\"" . $song->url . "\">" . $song->name . "</a><br />by " . $song->artist->{'#text'} . "<div id=\"lastfmtime\">".$date."</div>";
 
 		return $r;
 	}
